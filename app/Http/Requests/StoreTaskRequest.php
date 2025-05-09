@@ -1,0 +1,50 @@
+<?php
+
+namespace App\Http\Requests;
+
+use Illuminate\Foundation\Http\FormRequest;
+
+class StoreTaskRequest extends FormRequest
+{
+    /**
+     * Determine if the user is authorized to make this request.
+     */
+    public function authorize(): bool
+    {
+        return true;
+    }
+
+    /**
+     * Get the validation rules that apply to the request.
+     *
+     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
+     */
+    public function rules(): array
+    {
+        return [
+            'project_id' => 'required|exists:projects,id',
+            'title' => 'required|between:3,100',
+            'description' => 'nullable',
+            'priority' => 'required|in:low,medium,high',
+            'due_date' => 'required',
+        ];
+    }
+
+    public function messages()
+    {
+        return [
+            'project_id.required' => 'El campo es requerido.',
+            'project_id.exists' => 'El proyecto no existe.',
+
+            'title.required' => 'El campo es requerido.',
+            'title.between' => 'El nombre debe tener entre 3 y 100 caracteres.',
+
+            'description.required' => 'El campo es requerido.',
+
+            'priority.required' => 'El campo es requerido.',
+            'priority.in' => 'La prioridad es invalida, debe ser low, medium o high.',
+
+            'due_date.required' => 'El campo es requerido.',
+        ];
+    }
+}
