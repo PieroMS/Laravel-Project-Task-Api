@@ -1,12 +1,23 @@
 # Proyecto
 
-## Descripcion
-- Se realizo el CRUD con las validaciones, el Form Request, las consultas avanzadas, las migraciones, las relaciones. No se pudo realizar el swagger
+## Descripción
 
-## Ejecucion
-- Para correr el proyecto ejecute los siguietes comandos:
-´´´
-git clone [url del repositorio]
+Este proyecto implementa un sistema CRUD completo que incluye:
+
+- Validaciones mediante **Form Request**
+- Consultas avanzadas
+- Migraciones de base de datos
+- Relaciones entre modelos
+
+> **Nota:** No se pudo implementar swagger
+
+## Ejecución
+
+Para clonar y ejecutar el proyecto localmente, siga estos pasos:
+
+```bash
+git clone [URL del repositorio]
+cd [nombre-del-proyecto]
 composer install
-composer run dev
-´´´
+php artisan serve
+```
