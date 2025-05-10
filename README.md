@@ -4,19 +4,37 @@
 
 Este proyecto implementa un sistema CRUD completo que incluye:
 
-- **Validaciones** mediante **Form Request**.
-- **Consultas avanzadas** para filtrar y obtener datos específicos.
-- **Migraciones de base de datos** para crear y estructurar las tablas.
-- **Relaciones entre modelos** para gestionar la integridad de los datos.
-- **Documentación Swagger** para una fácil integración y pruebas de la API.
+- Validaciones mediante **Form Request**.
+- Consultas avanzadas.
+- Migraciones de base de datos.
+- Relaciones entre modelos.
+- **Documentación Swagger** para una fácil integración y prueba de la API.
 
+## Requisitos del Sistema
 
-## Ejecución
+- **PHP** >= 8.0
+- **Composer** (para la gestión de dependencias)
+- **MySQL** o **MariaDB** (base de datos)
+- **Laravel** 12
 
-Para clonar y ejecutar el proyecto localmente, siga estos pasos:
+## Instalación Paso a Paso
 
 ```bash
 git clone [URL del repositorio]
 cd [nombre-del-proyecto]
 composer install
+```
+
+- Copia el archivo .env.example y renombralo como .env
+
+- Ejecuta los siguientes comandos:
+```bash
+php artisan key:generate
+php artisan migrate
+```
+- Finalmente ejecuta el programa
+```bash
 php artisan serve
+```
+
+> **Nota:** Para abrir Swagger necesitas esta url: ```http://127.0.0.1:8000/api/documentation```
