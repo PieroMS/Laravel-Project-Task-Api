@@ -25,6 +25,7 @@ class UpdateTaskRequest extends FormRequest
             'project_id' => 'required|exists:projects,id',
             'title' => 'required|between:3,100',
             'description' => 'nullable',
+            'status' => 'required|in:pending,progress,done',
             'priority' => 'required|in:low,medium,high',
             'due_date' => 'required',
         ];
@@ -40,6 +41,9 @@ class UpdateTaskRequest extends FormRequest
             'title.between' => 'El nombre debe tener entre 3 y 100 caracteres.',
 
             'description.required' => 'El campo es requerido.',
+
+            'status.required' => 'El campo es requerido.',
+            'status.in' => 'El estado es invalido, debe ser pending, progress o done.',
 
             'priority.required' => 'El campo es requerido.',
             'priority.in' => 'La prioridad es invalida, debe ser low, medium o high.',
