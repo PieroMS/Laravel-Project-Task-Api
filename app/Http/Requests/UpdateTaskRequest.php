@@ -22,7 +22,6 @@ class UpdateTaskRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'project_id' => 'required|exists:projects,id',
             'title' => 'required|between:3,100',
             'description' => 'nullable',
             'status' => 'required|in:pending,progress,done',
@@ -34,9 +33,6 @@ class UpdateTaskRequest extends FormRequest
     public function messages()
     {
         return [
-            'project_id.required' => 'El campo es requerido.',
-            'project_id.exists' => 'El proyecto no existe.',
-
             'title.required' => 'El campo es requerido.',
             'title.between' => 'El nombre debe tener entre 3 y 100 caracteres.',
 

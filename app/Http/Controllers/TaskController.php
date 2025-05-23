@@ -5,21 +5,11 @@ namespace App\Http\Controllers;
 use App\Models\Task;
 use App\Http\Requests\StoreTaskRequest;
 use App\Http\Requests\UpdateTaskRequest;
-use Illuminate\Http\Request;
 
 /**
- * @OA\Schema(
- *     schema="Task",
- *     type="object",
- *     title="Task",
- *     required={"project_id", "title", "status", "priority", "due_date"},
- *     @OA\Property(property="id", type="integer", example=1),
- *     @OA\Property(property="project_id", type="integer", example=2, description="ID del proyecto al que pertenece la tarea"),
- *     @OA\Property(property="title", type="string", example="Tarea ejemplo", description="Título de la tarea"),
- *     @OA\Property(property="description", type="string", example="Descripción corta", description="Descripción de la tarea"),
- *     @OA\Property(property="status", type="string", example="pending", description="Estado de la tarea (pending, progress, done)"),
- *     @OA\Property(property="priority", type="string", example="high", description="Prioridad de la tarea (low, medium, high)"),
- *     @OA\Property(property="due_date", type="string", format="date", example="2025-05-15", description="Fecha límite de la tarea"),
+ * @OA\Tag(
+ *     name="Task",
+ *     description="API Endpoints para gestión de Tareas"
  * )
  */
 class TaskController extends Controller
@@ -27,219 +17,213 @@ class TaskController extends Controller
     /**
      * @OA\Get(
      *     path="/api/task",
-     *     operationId="getTasks",
      *     tags={"Task"},
-     *     summary="Listar tareas",
-     *     description="Devuelve todas las tareas según los filtros proporcionados",
-     *     @OA\Parameter(
-     *         name="status",
-     *         in="query",
-     *         description="Filtrar tareas por estado",
-     *         required=false,
-     *         @OA\Schema(type="string", enum={"pending", "progress", "done"})
-     *     ),
-     *     @OA\Parameter(
-     *         name="priority",
-     *         in="query",
-     *         description="Filtrar tareas por prioridad",
-     *         required=false,
-     *         @OA\Schema(type="string", enum={"low", "medium", "high"})
-     *     ),
-     *     @OA\Parameter(
-     *         name="from",
-     *         in="query",
-     *         description="Filtrar tareas por fecha de inicio (formato YYYY-MM-DD)",
-     *         required=false,
-     *         @OA\Schema(type="string", format="date")
-     *     ),
-     *     @OA\Parameter(
-     *         name="to",
-     *         in="query",
-     *         description="Filtrar tareas por fecha de fin (formato YYYY-MM-DD)",
-     *         required=false,
-     *         @OA\Schema(type="string", format="date")
-     *     ),
-     *     @OA\Parameter(
-     *         name="project_id",
-     *         in="query",
-     *         description="Filtrar tareas por ID del proyecto",
-     *         required=false,
-     *         @OA\Schema(type="integer")
-     *     ),
+     *     summary="Obtener la lista de Task",
+     *     description="Obtiene una lista de todos las tareas disponibles",
+     *     operationId="getTask",
      *     @OA\Response(
      *         response=200,
-     *         description="Éxito",
+     *         description="Lista obtenida correctamente",
      *         @OA\JsonContent(
-     *             type="array",
-     *             @OA\Items(ref="#/components/schemas/Task")
+     *             @OA\Property(property="success", type="boolean", example=true),
+     *             @OA\Property(property="message", type="string", example="Lista obtenida correctamente"),
+     *             @OA\Property(property="data", type="array", @OA\Items(type="object"))
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=500,
+     *         description="Error interno del servidor",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="success", type="boolean", example=false),
+     *             @OA\Property(property="message", type="string", example="Error al obtener la lista: Detalles del error")
      *         )
      *     )
      * )
      */
-    public function index(Request $request)
+    public function index()
     {
-        $query = Task::query();
-
-        if($request->filled('status')) {
-            $query->where('status', 'like', '%' . $request->status . '%');
-        }
-
-        if($request->filled('priority')) {
-            $query->where('priority', 'like', '%' . $request->priority . '%');
-        }
-
-        if($request->filled('from') && $request->filled('to')) {
-            $query->whereBetween('due_date', [$request->from, $request->to]);
-        }
-
-        if($request->filled('project_id')) {
-            $query->where('project_id', 'like', '%' . $request->project_id . '%');
-        }
-
-        return $query->get();
+        $data = Task::all();
+        return response()->json([
+            'message' => 'Lista de tareas',
+            'data' => $data,
+        ], 200);
     }
-
+    
     /**
      * @OA\Post(
      *     path="/api/task",
-     *     operationId="createTask",
      *     tags={"Task"},
-     *     summary="Crear tarea",
-     *     description="Crea una nueva tarea",
+     *     summary="Crear un nuevo Task",
+     *     description="Crea una nueva tarea con los datos proporcionados",
+     *     operationId="createTask",
      *     @OA\RequestBody(
      *         required=true,
      *         @OA\JsonContent(
-     *             type="object",
-     *             required={"project_id", "title", "status", "priority", "due_date"},
-     *             @OA\Property(property="project_id", type="integer", example=2, description="ID del proyecto al que pertenece la tarea"),
-     *             @OA\Property(property="title", type="string", example="Tarea ejemplo", description="Título de la tarea"),
-     *             @OA\Property(property="description", type="string", example="Descripción corta", description="Descripción de la tarea"),
-     *             @OA\Property(property="status", type="string", example="pending", description="Estado de la tarea (pending, progress, done)"),
-     *             @OA\Property(property="priority", type="string", example="high", description="Prioridad de la tarea (low, medium, high)"),
-     *             @OA\Property(property="due_date", type="string", format="date", example="2025-05-15", description="Fecha límite de la tarea")
+     *             required={
+     *                 "project_id",
+     *                 "title",
+     *                 "status",
+     *                 "priority",
+     *                 "due_date"
+     *             },
+     *             @OA\Property(property="project_id", type="string", example="1"),
+     *             @OA\Property(property="title", type="string", example="Tarea de ejemplo"),
+     *             @OA\Property(property="description", type="string", nullable=true, example="Esto es opcional"),
+     *             @OA\Property(property="status", type="string", example="pending"),
+     *             @OA\Property(property="priority", type="string", example="medium"),
+     *             @OA\Property(property="due_date", type="string", example="2025-06-01")
      *         )
      *     ),
      *     @OA\Response(
      *         response=201,
-     *         description="Tarea creada",
+     *         description="Dato creada correctamente",
      *         @OA\JsonContent(
-     *             type="object",
-     *             @OA\Property(property="message", type="string", example="Tarea creada"),
-     *             @OA\Property(property="data", ref="#/components/schemas/Task")
+     *             @OA\Property(property="success", type="boolean", example=true),
+     *             @OA\Property(property="message", type="string", example="Dato creado correctamente"),
+     *             @OA\Property(property="data", type="object")
      *         )
      *     ),
      *     @OA\Response(
-     *         response=400,
-     *         description="Error de validación",
+     *         response=422,
+     *         description="Datos de entrada inválidos",
      *         @OA\JsonContent(
-     *             type="object",
-     *             @OA\Property(property="message", type="string", example="Error de validación")
+     *             @OA\Property(property="success", type="boolean", example=false),
+     *             @OA\Property(property="message", type="string", example="Los datos proporcionados no son válidos."),
+     *             @OA\Property(property="errors", type="object")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=500,
+     *         description="Error interno del servidor",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="success", type="boolean", example=false),
+     *             @OA\Property(property="message", type="string", example="Error al crear: Detalles del error")
      *         )
      *     )
      * )
      */
     public function store(StoreTaskRequest $request)
     {
-        $task = Task::create($request->validated());
+        $task = Task::create($request->all());
 
         return response()->json([
             'message' => 'Tarea creada',
             'data' => $task,
         ], 201);
     }
-
+    
     /**
      * @OA\Get(
-     *     path="/api/task/{id}",
-     *     operationId="getTask",
+     *     path="/api/task/{task}",
      *     tags={"Task"},
-     *     summary="Mostrar tarea",
-     *     description="Muestra los detalles de una tarea específica",
+     *     summary="Buscar un Task por id",
+     *     description="Devuelve una tarea en especifico.",
+     *     operationId="showReward",
      *     @OA\Parameter(
-     *         name="id",
+     *         name="task",
      *         in="path",
-     *         description="ID de la tarea",
      *         required=true,
-     *         @OA\Schema(type="integer")
+     *         description="ID del Task a buscar",
+     *         @OA\Schema(type="integer", example=1)
      *     ),
      *     @OA\Response(
      *         response=200,
-     *         description="Tarea encontrada",
+     *         description="Dato obtenido correctamente",
      *         @OA\JsonContent(
-     *             type="object",
-     *             @OA\Property(property="message", type="string", example="Tarea encontrada"),
-     *             @OA\Property(property="data", ref="#/components/schemas/Task")
+     *             @OA\Property(property="success", type="boolean", example=true),
+     *             @OA\Property(property="message", type="string", example="Dato obtenido correctamente"),
+     *             @OA\Property(property="data", type="array", @OA\Items(type="object"))
+     *         )
+     *     ),
+     *    @OA\Response(
+     *         response=404,
+     *         description="Dato no encontrado",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="success", type="boolean", example=false),
+     *             @OA\Property(property="message", type="string", example="El dato no existe.")
      *         )
      *     ),
      *     @OA\Response(
-     *         response=404,
-     *         description="Tarea no encontrada",
+     *         response=500,
+     *         description="Error interno del servidor",
      *         @OA\JsonContent(
-     *             type="object",
-     *             @OA\Property(property="message", type="string", example="Tarea no encontrada")
+     *             @OA\Property(property="success", type="boolean", example=false),
+     *             @OA\Property(property="message", type="string", example="Error al obtener el dato: Detalles del error")
      *         )
      *     )
      * )
      */
     public function show(Task $task)
     {
-        $task->load('project');
+        $task = Task::find($task->id);
         return response()->json([
             'message' => 'Tarea encontrada',
             'data' => $task,
         ], 200);
     }
-
+    
     /**
      * @OA\Put(
-     *     path="/api/task/{id}",
-     *     operationId="updateTask",
+     *     path="/api/task/{task}",
      *     tags={"Task"},
-     *     summary="Actualizar tarea",
-     *     description="Actualiza los datos de una tarea existente",
+     *     summary="Actualizar un task existente",
+     *     description="Actualiza los datos de una tarea existente con la información proporcionada",
+     *     operationId="updateTask",
      *     @OA\Parameter(
-     *         name="id",
+     *         name="task",
      *         in="path",
-     *         description="ID de la tarea",
      *         required=true,
-     *         @OA\Schema(type="integer")
+     *         description="ID del Task a actualizar",
+     *         @OA\Schema(type="integer", example=1)
      *     ),
      *     @OA\RequestBody(
      *         required=true,
      *         @OA\JsonContent(
-     *             type="object",
-     *             required={"project_id", "title", "status", "priority", "due_date"},
-     *             @OA\Property(property="project_id", type="integer", example=2, description="ID del proyecto al que pertenece la tarea"),
-     *             @OA\Property(property="title", type="string", example="Tarea actualizada", description="Título de la tarea"),
-     *             @OA\Property(property="description", type="string", example="Descripción actualizada", description="Descripción de la tarea"),
-     *             @OA\Property(property="status", type="string", example="progress", description="Estado de la tarea (pending, progress, done)"),
-     *             @OA\Property(property="priority", type="string", example="medium", description="Prioridad de la tarea (low, medium, high)"),
-     *             @OA\Property(property="due_date", type="string", format="date", example="2025-06-01", description="Fecha límite de la tarea")
+     *             required={
+     *                 "title",
+     *                 "status",
+     *                 "priority",
+     *                 "due_date"
+     *             },
+     *             @OA\Property(property="title", type="string", example="Tarea de ejemplo"),
+     *             @OA\Property(property="description", type="string", nullable=true, example="Esto es opcional"),
+     *             @OA\Property(property="status", type="string", example="pending"),
+     *             @OA\Property(property="priority", type="string", example="medium"),
+     *             @OA\Property(property="due_date", type="string", example="2025-06-01")
      *         )
      *     ),
      *     @OA\Response(
      *         response=200,
-     *         description="Tarea actualizada",
+     *         description="Dato actualizado correctamente",
      *         @OA\JsonContent(
-     *             type="object",
-     *             @OA\Property(property="message", type="string", example="Tarea actualizada"),
-     *             @OA\Property(property="data", ref="#/components/schemas/Task")
-     *         )
-     *     ),
-     *     @OA\Response(
-     *         response=400,
-     *         description="Error de validación",
-     *         @OA\JsonContent(
-     *             type="object",
-     *             @OA\Property(property="message", type="string", example="Error de validación")
+     *             @OA\Property(property="success", type="boolean", example=true),
+     *             @OA\Property(property="message", type="string", example="Dato actualizado correctamente"),
+     *             @OA\Property(property="data", type="object")
      *         )
      *     ),
      *     @OA\Response(
      *         response=404,
-     *         description="Tarea no encontrada",
+     *         description="Dato no encontrado",
      *         @OA\JsonContent(
-     *             type="object",
-     *             @OA\Property(property="message", type="string", example="Tarea no encontrada")
+     *             @OA\Property(property="success", type="boolean", example=false),
+     *             @OA\Property(property="message", type="string", example="El dato no existe.")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=422,
+     *         description="Datos de entrada inválidos",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="success", type="boolean", example=false),
+     *             @OA\Property(property="message", type="string", example="Los datos proporcionados no son válidos."),
+     *             @OA\Property(property="errors", type="object")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=500,
+     *         description="Error interno del servidor",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="success", type="boolean", example=false),
+     *             @OA\Property(property="message", type="string", example="Error al actualizar el dato: Detalles del error")
      *         )
      *     )
      * )
@@ -253,35 +237,44 @@ class TaskController extends Controller
             'data' => $task,
         ], 200);
     }
-
+    
     /**
      * @OA\Delete(
-     *     path="/api/task/{id}",
-     *     operationId="deleteTask",
+     *     path="/api/task/{task}",
      *     tags={"Task"},
-     *     summary="Eliminar tarea",
-     *     description="Elimina una tarea existente",
+     *     summary="Eliminar un Task existente",
+     *     description="Elimina una tarea existente con el ID proporcionado",
+     *     operationId="deleteTask",
      *     @OA\Parameter(
-     *         name="id",
+     *         name="task",
      *         in="path",
-     *         description="ID de la tarea",
      *         required=true,
-     *         @OA\Schema(type="integer")
+     *         description="ID del Task a eliminar",
+     *         @OA\Schema(type="integer", example=1)
      *     ),
      *     @OA\Response(
      *         response=200,
-     *         description="Tarea eliminada",
+     *         description="Dato eliminado correctamente",
      *         @OA\JsonContent(
-     *             type="object",
-     *             @OA\Property(property="message", type="string", example="Tarea eliminada")
+     *             @OA\Property(property="success", type="boolean", example=true),
+     *             @OA\Property(property="message", type="string", example="Dato eliminado correctamente"),
+     *             @OA\Property(property="data", type="object")
      *         )
      *     ),
      *     @OA\Response(
      *         response=404,
-     *         description="Tarea no encontrada",
+     *         description="dato no encontrado",
      *         @OA\JsonContent(
-     *             type="object",
-     *             @OA\Property(property="message", type="string", example="Tarea no encontrada")
+     *             @OA\Property(property="success", type="boolean", example=false),
+     *             @OA\Property(property="message", type="string", example="El dato no existe.")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=500,
+     *         description="Error interno del servidor",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="success", type="boolean", example=false),
+     *             @OA\Property(property="message", type="string", example="Error al eliminar el dato: Detalles del error")
      *         )
      *     )
      * )

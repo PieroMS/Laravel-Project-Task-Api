@@ -2,39 +2,49 @@
 
 ## Descripción
 
-Este proyecto implementa un sistema CRUD completo que incluye:
+Este proyecto abarcar el uso de Swagger para documentar y Laravel Telescope
 
-- Validaciones mediante **Form Request**.
-- Consultas avanzadas.
-- Migraciones de base de datos.
-- Relaciones entre modelos.
-- **Documentación Swagger** para una fácil integración y prueba de la API.
+## Swagger
 
-## Requisitos del Sistema
+- Repositorio de instalación: https://github.com/DarkaOnLine/L5-Swagger
 
-- **PHP** >= 8.0
-- **Composer** (para la gestión de dependencias)
-- **MySQL** o **MariaDB** (base de datos)
-- **Laravel** 12
+## Instalar Swagger - darkaonline l5-swagger
 
-## Instalación Paso a Paso
-
-```bash
-git clone [URL del repositorio]
-cd [nombre-del-proyecto]
-composer install
+- Ejecutar cada uno de los comandos:
+```
+composer require "darkaonline/l5-swagger"
+php artisan vendor:publish --provider "L5Swagger\L5SwaggerServiceProvider"
+php artisan l5-swagger:generate
 ```
 
-- Copia el archivo .env.example y renombralo como .env
+- En el .env
 
-- Ejecuta los siguientes comandos:
-```bash
-php artisan key:generate
-php artisan migrate
 ```
-- Finalmente ejecuta el programa
-```bash
-php artisan serve
+# SWAGGER
+L5_SWAGGER_GENERATE_ALWAYS=true
+L5_SWAGGER_CONST_HOST=http://localhost:8000
 ```
 
-> **Nota:** Para abrir Swagger necesitas esta url: ```http://127.0.0.1:8000/api/documentation```
+- Ver el proyecto: http://localhost:8000/api/documentation (puedes ver la ruta en ```config/l5-swagger.php```)
+
+## Desinstalar Swagger de un proyecto
+
+- Eliminar el paquete con Composer
+```
+composer remove darkaonline/l5-swagger
+```
+
+- Eliminar archivos generados
+```
+rm config/l5-swagger.php
+rm -rf storage/api-docs
+rm -rf public/docs
+```
+
+-Limpiar cache
+```
+php artisan config:clear
+php artisan route:clear
+php artisan view:clear
+php artisan cache:clear
+```

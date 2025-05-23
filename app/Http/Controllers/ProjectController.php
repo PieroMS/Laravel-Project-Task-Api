@@ -5,126 +5,93 @@ namespace App\Http\Controllers;
 use App\Models\Project;
 use App\Http\Requests\StoreProjectRequest;
 use App\Http\Requests\UpdateProjectRequest;
-use Illuminate\Http\Request;
 
 /**
-* @OA\Info(
-*             title="API Project", 
-*             version="1.0",
-*             description="Listado de URIs de la API Project"
-* )
-*
-* @OA\Server(url="http://127.0.0.1:8000")
-*/
+ * @OA\Tag(
+ *     name="Project",
+ *     description="API Endpoints para gestión de Proyectos"
+ * )
+ */
 class ProjectController extends Controller
 {
     /**
-     * Listado filtrado de proyectos
-     *
      * @OA\Get(
      *     path="/api/project",
      *     tags={"Project"},
-     *     summary="Obtener lista de proyectos filtrados",
-     *     @OA\Parameter(
-     *         name="Project 1",
-     *         in="query",
-     *         description="Nombre del proyecto",
-     *         required=false,
-     *         @OA\Schema(type="string")
-     *     ),
-     *     @OA\Parameter(
-     *         name="status",
-     *         in="query",
-     *         description="Estado del proyecto",
-     *         required=false,
-     *         @OA\Schema(type="string")
-     *     ),
-     *     @OA\Parameter(
-     *         name="from",
-     *         in="query",
-     *         description="Fecha de inicio del filtro (YYYY-MM-DD)",
-     *         required=false,
-     *         @OA\Schema(type="string", format="date")
-     *     ),
-     *     @OA\Parameter(
-     *         name="to",
-     *         in="query",
-     *         description="Fecha de fin del filtro (YYYY-MM-DD)",
-     *         required=false,
-     *         @OA\Schema(type="string", format="date")
-     *     ),
+     *     summary="Obtener la lista de Project",
+     *     description="Obtiene una lista de todos los proyectos disponibles",
+     *     operationId="getProject",
      *     @OA\Response(
      *         response=200,
-     *         description="Lista de proyectos",
+     *         description="Lista obtenida correctamente",
      *         @OA\JsonContent(
-     *             type="array",
-     *             @OA\Items(
-     *                 @OA\Property(property="id", type="integer", example=1),
-     *                 @OA\Property(property="name", type="string", example="Proyecto 1"),
-     *                 @OA\Property(property="status", type="string", example="active"),
-     *                 @OA\Property(property="created_at", type="string", format="date-time", example="2023-02-23T00:09:16.000000Z"),
-     *                 @OA\Property(property="updated_at", type="string", format="date-time", example="2023-02-23T12:33:45.000000Z")
-     *             )
+     *             @OA\Property(property="success", type="boolean", example=true),
+     *             @OA\Property(property="message", type="string", example="Lista obtenida correctamente"),
+     *             @OA\Property(property="data", type="array", @OA\Items(type="object"))
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=500,
+     *         description="Error interno del servidor",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="success", type="boolean", example=false),
+     *             @OA\Property(property="message", type="string", example="Error al obtener la lista: Detalles del error")
      *         )
      *     )
      * )
      */
-    public function index(Request $request)
+    public function index()
     {
-        $query = Project::query();
-
-        if($request->filled('name')) {
-            $query->where('name', 'like', '%' . $request->name . '%');
-        }
-
-        if($request->filled('status')) {
-            $query->where('status', 'like', '%' . $request->status . '%');
-        }
-
-        if($request->filled('from') && $request->filled('to')) {
-            $query->whereBetween('created_at', [$request->from, $request->to]);
-        }
-
-        return $query->get();
+        $data = Project::with('tasks')->get();
+        return response()->json([
+            'message' => 'Lista de proyectos',
+            'data' => $data,
+        ], 200);
     }
     
     /**
-     * Crear un nuevo proyecto
-     *
      * @OA\Post(
      *     path="/api/project",
      *     tags={"Project"},
-     *     summary="Crea un nuevo proyecto",
+     *     summary="Crear un nuevo Project",
+     *     description="Crea un nuevo proyecto con los datos proporcionados",
+     *     operationId="createProject",
      *     @OA\RequestBody(
      *         required=true,
      *         @OA\JsonContent(
-     *             required={"name", "status"},
-     *             @OA\Property(property="name", type="string", example="Nuevo Proyecto"),
+     *             required={
+     *                 "name",
+     *                 "status"
+     *             },
+     *             @OA\Property(property="name", type="string", example="Proyecto 1"),
+     *             @OA\Property(property="description", type="string", nullable=true, example="Esto es opcional"),
      *             @OA\Property(property="status", type="string", example="active")
      *         )
      *     ),
      *     @OA\Response(
      *         response=201,
-     *         description="Proyecto creado exitosamente",
+     *         description="Dato creada correctamente",
      *         @OA\JsonContent(
-     *             @OA\Property(property="message", type="string", example="Proyecto creado"),
-     *             @OA\Property(
-     *                 property="data",
-     *                 type="object",
-     *                 @OA\Property(property="id", type="integer", example=1),
-     *                 @OA\Property(property="name", type="string", example="Nuevo Proyecto"),
-     *                 @OA\Property(property="status", type="string", example="activo"),
-     *                 @OA\Property(property="created_at", type="string", format="date-time", example="2025-05-09T10:00:00.000000Z"),
-     *                 @OA\Property(property="updated_at", type="string", format="date-time", example="2025-05-09T10:00:00.000000Z")
-     *             )
+     *             @OA\Property(property="success", type="boolean", example=true),
+     *             @OA\Property(property="message", type="string", example="Dato creado correctamente"),
+     *             @OA\Property(property="data", type="object")
      *         )
      *     ),
      *     @OA\Response(
      *         response=422,
-     *         description="Error de validación",
+     *         description="Datos de entrada inválidos",
      *         @OA\JsonContent(
+     *             @OA\Property(property="success", type="boolean", example=false),
      *             @OA\Property(property="message", type="string", example="Los datos proporcionados no son válidos."),
      *             @OA\Property(property="errors", type="object")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=500,
+     *         description="Error interno del servidor",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="success", type="boolean", example=false),
+     *             @OA\Property(property="message", type="string", example="Error al crear: Detalles del error")
      *         )
      *     )
      * )
@@ -140,47 +107,43 @@ class ProjectController extends Controller
     }
     
     /**
-     * Obtener un proyecto por ID
-     *
      * @OA\Get(
-     *     path="/api/project/{id}",
+     *     path="/api/project/{project}",
      *     tags={"Project"},
-     *     summary="Mostrar información de un proyecto",
+     *     summary="Buscar un Project por id",
+     *     description="Devuelve un proyecto en especifico.",
+     *     operationId="showProject",
      *     @OA\Parameter(
-     *         name="id",
+     *         name="project",
      *         in="path",
      *         required=true,
-     *         description="ID del proyecto",
-     *         @OA\Schema(type="integer")
+     *         description="ID del Project a buscar",
+     *         @OA\Schema(type="integer", example=1)
      *     ),
      *     @OA\Response(
      *         response=200,
-     *         description="Proyecto encontrado",
+     *         description="Dato obtenido correctamente",
      *         @OA\JsonContent(
-     *             @OA\Property(property="message", type="string", example="Proyecto encontrado"),
-     *             @OA\Property(
-     *                 property="data",
-     *                 type="object",
-     *                 @OA\Property(property="id", type="integer", example=1),
-     *                 @OA\Property(property="name", type="string", example="Proyecto X"),
-     *                 @OA\Property(property="status", type="string", example="active"),
-     *                 @OA\Property(property="created_at", type="string", format="date-time", example="2025-05-09T10:00:00.000000Z"),
-     *                 @OA\Property(property="updated_at", type="string", format="date-time", example="2025-05-09T10:00:00.000000Z"),
-     *                 @OA\Property(
-     *                     property="tasks",
-     *                     type="array",
-     *                     @OA\Items(
-     *                         type="object",
-     *                         @OA\Property(property="id", type="integer", example=10),
-     *                         @OA\Property(property="title", type="string", example="Tarea 1")
-     *                     )
-     *                 )
-     *             )
+     *             @OA\Property(property="success", type="boolean", example=true),
+     *             @OA\Property(property="message", type="string", example="Dato obtenido correctamente"),
+     *             @OA\Property(property="data", type="array", @OA\Items(type="object"))
+     *         )
+     *     ),
+     *    @OA\Response(
+     *         response=404,
+     *         description="Dato no encontrado",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="success", type="boolean", example=false),
+     *             @OA\Property(property="message", type="string", example="El dato no existe.")
      *         )
      *     ),
      *     @OA\Response(
-     *         response=404,
-     *         description="Proyecto no encontrado"
+     *         response=500,
+     *         description="Error interno del servidor",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="success", type="boolean", example=false),
+     *             @OA\Property(property="message", type="string", example="Error al obtener el dato: Detalles del error")
+     *         )
      *     )
      * )
      */
@@ -194,50 +157,64 @@ class ProjectController extends Controller
     }
     
     /**
-     * Actualizar un proyecto
-     *
      * @OA\Put(
-     *     path="/api/project/{id}",
+     *     path="/api/project/{project}",
      *     tags={"Project"},
-     *     summary="Actualizar los datos de un proyecto",
+     *     summary="Actualizar un Project existente",
+     *     description="Actualiza los datos de un proyecto existente con la información proporcionada",
+     *     operationId="updateProject",
      *     @OA\Parameter(
-     *         name="id",
+     *         name="project",
      *         in="path",
      *         required=true,
-     *         description="ID del proyecto",
-     *         @OA\Schema(type="integer")
+     *         description="ID del Project a actualizar",
+     *         @OA\Schema(type="integer", example=1)
      *     ),
      *     @OA\RequestBody(
      *         required=true,
      *         @OA\JsonContent(
-     *             required={"name", "status"},
-     *             @OA\Property(property="name", type="string", example="Proyecto Actualizado"),
-     *             @OA\Property(property="status", type="string", example="inactive")
+     *             required={
+     *                 "name",
+     *                 "status"
+     *             },
+     *             @OA\Property(property="name", type="string", example="Proyecto 1"),
+     *             @OA\Property(property="description", type="string", nullable=true, example="Esto es opcional"),
+     *             @OA\Property(property="status", type="string", example="active")
      *         )
      *     ),
      *     @OA\Response(
      *         response=200,
-     *         description="Proyecto actualizado",
+     *         description="Dato actualizado correctamente",
      *         @OA\JsonContent(
-     *             @OA\Property(property="message", type="string", example="Proyecto actualizado"),
-     *             @OA\Property(
-     *                 property="data",
-     *                 type="object",
-     *                 @OA\Property(property="id", type="integer", example=1),
-     *                 @OA\Property(property="name", type="string", example="Proyecto Actualizado"),
-     *                 @OA\Property(property="status", type="string", example="inactive"),
-     *                 @OA\Property(property="created_at", type="string", format="date-time", example="2025-05-09T10:00:00.000000Z"),
-     *                 @OA\Property(property="updated_at", type="string", format="date-time", example="2025-05-09T12:00:00.000000Z")
-     *             )
+     *             @OA\Property(property="success", type="boolean", example=true),
+     *             @OA\Property(property="message", type="string", example="Dato actualizado correctamente"),
+     *             @OA\Property(property="data", type="object")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Dato no encontrado",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="success", type="boolean", example=false),
+     *             @OA\Property(property="message", type="string", example="El dato no existe.")
      *         )
      *     ),
      *     @OA\Response(
      *         response=422,
-     *         description="Error de validación"
+     *         description="Datos de entrada inválidos",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="success", type="boolean", example=false),
+     *             @OA\Property(property="message", type="string", example="Los datos proporcionados no son válidos."),
+     *             @OA\Property(property="errors", type="object")
+     *         )
      *     ),
      *     @OA\Response(
-     *         response=404,
-     *         description="Proyecto no encontrado"
+     *         response=500,
+     *         description="Error interno del servidor",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="success", type="boolean", example=false),
+     *             @OA\Property(property="message", type="string", example="Error al actualizar el dato: Detalles del error")
+     *         )
      *     )
      * )
      */
@@ -252,29 +229,43 @@ class ProjectController extends Controller
     }
     
     /**
-     * Eliminar un proyecto
-     *
      * @OA\Delete(
-     *     path="/api/project/{id}",
+     *     path="/api/project/{project}",
      *     tags={"Project"},
-     *     summary="Eliminar un proyecto existente",
+     *     summary="Eliminar un Project existente",
+     *     description="Elimina un proyecto existente con el ID proporcionado",
+     *     operationId="deleteProject",
      *     @OA\Parameter(
-     *         name="id",
+     *         name="project",
      *         in="path",
      *         required=true,
-     *         description="ID del proyecto",
-     *         @OA\Schema(type="integer")
+     *         description="ID del Project a eliminar",
+     *         @OA\Schema(type="integer", example=1)
      *     ),
      *     @OA\Response(
      *         response=200,
-     *         description="Proyecto eliminado",
+     *         description="Dato eliminado correctamente",
      *         @OA\JsonContent(
-     *             @OA\Property(property="message", type="string", example="Proyecto eliminado")
+     *             @OA\Property(property="success", type="boolean", example=true),
+     *             @OA\Property(property="message", type="string", example="Dato eliminado correctamente"),
+     *             @OA\Property(property="data", type="object")
      *         )
      *     ),
      *     @OA\Response(
      *         response=404,
-     *         description="Proyecto no encontrado"
+     *         description="dato no encontrado",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="success", type="boolean", example=false),
+     *             @OA\Property(property="message", type="string", example="El dato no existe.")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=500,
+     *         description="Error interno del servidor",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="success", type="boolean", example=false),
+     *             @OA\Property(property="message", type="string", example="Error al eliminar el dato: Detalles del error")
+     *         )
      *     )
      * )
      */
