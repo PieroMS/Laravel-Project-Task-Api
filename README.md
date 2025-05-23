@@ -1,21 +1,21 @@
-# Proyecto
+# 🚀 Proyecto
 
-Este proyecto abarcar el uso de Swagger para documentar y Laravel Telescope
+Este proyecto abarca el uso de Swagger para documentar y Laravel Telescope
 
-## Swagger
+## 📘 Swagger
 
-- Repositorio de instalación: https://github.com/DarkaOnLine/L5-Swagger
+- 🔗 Repositorio de instalación: https://github.com/DarkaOnLine/L5-Swagger
 
-### Instalar Swagger - darkaonline l5-swagger
+### 🧩 Instalar Swagger - darkaonline l5-swagger
 
-- Ejecutar cada uno de los comandos:
+- 👉 Ejecutar cada uno de los comandos:
 ```
 composer require "darkaonline/l5-swagger"
 php artisan vendor:publish --provider "L5Swagger\L5SwaggerServiceProvider"
 php artisan l5-swagger:generate
 ```
 
-- En el .env
+- 🛠️ En el archivo .env agrega las siguientes variables:
 
 ```
 # SWAGGER
