@@ -1,6 +1,6 @@
 # 🚀 Proyecto
 
-Este proyecto abarca el uso de Swagger para documentar y Laravel Telescope
+Este proyecto abarca el uso de Swagger para documentar, Laravel Telescope para debuggear la aplicación, Sanctum para generar tokens y Spatie para la gestión de roles y permisos.
 
 ## 📘 Swagger
 
@@ -66,26 +66,33 @@ public function register(): void
 
 - 🌍 Ver el proyecto: http://localhost:8000/telescope
 
+---
+
+## 📘 Sanctum
+
+- 🔗 Documentación de Laravel: https://laravel.com/docs/12.x/sanctum
+
+### 🧩 Instalar Sanctum
+
+- 👉 Ejecutar = Laravel 12:
+```
+php artisan install:api
+php artisan migrate
+```
+
+- 👉 Ejecutar < Laravel 12:
+```
+composer require laravel/sanctum
+php artisan vendor:publish --tag=sanctum-config
+php artisan migrate
+```
+
+- ✅ Ágregar en el modelo User: 
+```
+use Laravel\Sanctum\HasApiTokens;
+HasApiTokens
+```
+
 ### Reiniciar
 
 - php artisan optimize:clear
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
