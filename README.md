@@ -109,12 +109,13 @@ php artisan migrate
 
 - ✅ Ágregar en el modelo User: 
 ```
-use Laravel\Sanctum\HasApiTokens;
 use Spatie\Permission\Traits\HasRoles;
 HasRoles;
 ```
 
 - Se crea un RoleSeeder y se configura los roles
+
+---
 
 ### Reiniciar
 
