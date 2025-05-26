@@ -25,6 +25,8 @@ L5_SWAGGER_CONST_HOST=http://localhost:8000
 
 - 🌍 Ver el proyecto: http://localhost:8000/api/documentation (puedes ver la ruta en ```config/l5-swagger.php```)
 
+---
+
 ## 📘 Telescope
 
 - 🔗 Documentación de Laravel: https://laravel.com/docs/12.x/telescope
@@ -40,7 +42,7 @@ php artisan migrate
 
 - ❌ Eliminar (o comentar) esta línea: App\Providers\TelescopeServiceProvider::class,
 
--Agregar en ```app/Providers/AppServiceProvider.php```:
+- Agregar en ```app/Providers/AppServiceProvider.php```:
 ```
 public function register(): void
 {
