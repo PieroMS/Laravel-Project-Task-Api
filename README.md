@@ -92,6 +92,29 @@ php artisan migrate
 use Laravel\Sanctum\HasApiTokens;
 HasApiTokens
 ```
+---
+
+## 📘 Spatie
+
+- 🔗 Documentación de Laravel: https://spatie.be/docs/laravel-permission/v6/installation-laravel
+
+### 🧩 Instalar Spatie
+
+- 👉 Ejecutar cada uno de los comandos:
+```
+composer require spatie/laravel-permission
+php artisan vendor:publish --provider="Spatie\Permission\PermissionServiceProvider"
+php artisan migrate
+```
+
+- ✅ Ágregar en el modelo User: 
+```
+use Laravel\Sanctum\HasApiTokens;
+use Spatie\Permission\Traits\HasRoles;
+HasRoles;
+```
+
+- Se crea un RoleSeeder y se configura los roles
 
 ### Reiniciar
 
