@@ -23,6 +23,8 @@ L5_SWAGGER_GENERATE_ALWAYS=true
 L5_SWAGGER_CONST_HOST=http://localhost:8000
 ```
 
+- Se configura la base en el controlador base "Controller"
+
 - 🌍 Ver el proyecto: http://localhost:8000/api/documentation (puedes ver la ruta en ```config/l5-swagger.php```)
 
 ---
@@ -123,9 +125,3 @@ $middleware->alias([
 ```
 
 - Se crea un RoleSeeder y se configura los roles. En el UserSeeder se define el rol por usuario. En las rutas se configura el tipo de permiso.
-
----
-
-### Reiniciar
-
-- php artisan optimize:clear
