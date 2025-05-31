@@ -67,6 +67,7 @@ class AuthController extends Controller
         return response()->json([
             'message' => 'Inicio de sesión exitoso',
             'token' => $token,
+            'rol' => $user->getRoleNames(),
             'user' => $user,
         ]);
     }

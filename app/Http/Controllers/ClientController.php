@@ -20,6 +20,7 @@ class ClientController extends Controller
      *     path="/api/client",
      *     tags={"Client"},
      *     summary="Obtener la lista de Clientes",
+     *     security={{ "sanctum": {} }},
      *     description="Obtiene una lista de todos los clientes disponibles",
      *     operationId="getClientList",
      *     @OA\Response(
@@ -47,6 +48,7 @@ class ClientController extends Controller
      *     path="/api/client",
      *     tags={"Client"},
      *     summary="Crear un nuevo Cliente",
+     *     security={{ "sanctum": {} }},
      *     description="Crea un nuevo cliente con los datos proporcionados",
      *     operationId="createClient",
      *     @OA\RequestBody(
@@ -96,6 +98,7 @@ class ClientController extends Controller
      * @OA\Get(
      *     path="/api/client/{id}",
      *     tags={"Client"},
+     *     security={{ "sanctum": {} }},
      *     summary="Obtener un Cliente por ID",
      *     description="Devuelve un cliente específico según su ID",
      *     operationId="getClient",
@@ -136,6 +139,7 @@ class ClientController extends Controller
      *     path="/api/client/{id}",
      *     tags={"Client"},
      *     summary="Actualizar un Cliente existente",
+     *     security={{ "sanctum": {} }},
      *     description="Actualiza los datos de un cliente existente con la información proporcionada",
      *     operationId="updateClient",
      *     @OA\Parameter(
@@ -198,6 +202,7 @@ class ClientController extends Controller
      *     path="/api/client/{id}",
      *     tags={"Client"},
      *     summary="Eliminar un Cliente",
+     *     security={{ "sanctum": {} }},
      *     description="Elimina un cliente según su ID",
      *     operationId="deleteClient",
      *     @OA\Parameter(

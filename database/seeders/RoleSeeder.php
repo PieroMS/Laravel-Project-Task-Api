@@ -16,11 +16,12 @@ class RoleSeeder extends Seeder
     {
         // Definir roles
 
-        $superadmin = Role::create(['name' => 'superadmin', 'guard_name' => 'api']);
-        $admin = Role::create(['name' => 'admin', 'guard_name' => 'api']);
+        $superadmin = Role::create(['name' => 'jefe', 'guard_name' => 'api']);
+        $admin = Role::create(['name' => 'administrador', 'guard_name' => 'api']);
         $client = Role::create(['name' => 'client', 'guard_name' => 'api']);
 
         // Crear permisos y asignar a roles
+        // El rol superadmin ya tiene permisos por defecto
         Permission::create(['name' => 'index', 'guard_name' => 'api'])->syncRoles([$superadmin, $admin, $client]);
         Permission::create(['name' => 'show', 'guard_name' => 'api'])->syncRoles([$superadmin, $admin, $client]);
         Permission::create(['name' => 'create', 'guard_name' => 'api'])->syncRoles([$superadmin, $admin]);

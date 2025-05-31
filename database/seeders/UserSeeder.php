@@ -23,7 +23,7 @@ class UserSeeder extends Seeder
             'email_verified_at' => now(),
             'password' => Hash::make('12345678'),
             'remember_token' => Str::random(10),
-        ])->assignRole('superadmin');
+        ])->assignRole('jefe');
 
         User::factory()->create([
             'name' => 'Emma',
@@ -33,7 +33,7 @@ class UserSeeder extends Seeder
             'email_verified_at' => now(),
             'password' => Hash::make('12345678'),
             'remember_token' => Str::random(10),
-        ])->assignRole('admin');
+        ])->assignRole('administrador');
 
         User::factory(4)->create()->each(function ($user) {
             $user->assignRole('client');

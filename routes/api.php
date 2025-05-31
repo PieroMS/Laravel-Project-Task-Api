@@ -28,7 +28,7 @@ Route::post('/login', [AuthController::class, 'login']);
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
 
-    Route::get('/client', [ClientController::class, 'index'])->middleware('permission:index');
+    Route::get('/client', [ClientController::class, 'index'])->middleware('permission:index'); // Registrar este middleware en el bootstrap/app
     Route::post('/client', [ClientController::class, 'store'])->middleware('permission:create');
     Route::get('/client/{id}', [ClientController::class, 'show'])->middleware('permission:show');
     Route::put('/client/{id}', [ClientController::class, 'update'])->middleware('permission:update');

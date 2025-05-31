@@ -164,7 +164,12 @@
                     "500": {
                         "description": "Error interno del servidor"
                     }
-                }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
             },
             "post": {
                 "tags": [
@@ -229,7 +234,12 @@
                     "500": {
                         "description": "Error interno del servidor"
                     }
-                }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
             }
         },
         "/api/client/{id}": {
@@ -274,7 +284,12 @@
                     "500": {
                         "description": "Error interno del servidor"
                     }
-                }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
             },
             "put": {
                 "tags": [
@@ -354,7 +369,12 @@
                     "500": {
                         "description": "Error interno del servidor"
                     }
-                }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
             },
             "delete": {
                 "tags": [
@@ -398,7 +418,12 @@
                     "500": {
                         "description": "Error interno del servidor"
                     }
-                }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
             }
         },
         "/api/project": {
