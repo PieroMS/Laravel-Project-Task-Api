@@ -107,13 +107,22 @@ php artisan vendor:publish --provider="Spatie\Permission\PermissionServiceProvid
 php artisan migrate
 ```
 
-- ✅ Ágregar en el modelo User: 
+- ✅ Agregar en el modelo User: 
 ```
 use Spatie\Permission\Traits\HasRoles;
 HasRoles;
 ```
 
-- Se crea un RoleSeeder y se configura los roles
+- ✅ Agregar en el bootstrap/app: 
+```
+$middleware->alias([
+    'role' => \Spatie\Permission\Middleware\RoleMiddleware::class,
+    'permission' => \Spatie\Permission\Middleware\PermissionMiddleware::class,
+    'role_or_permission' => \Spatie\Permission\Middleware\RoleOrPermissionMiddleware::class,
+]);
+```
+
+- Se crea un RoleSeeder y se configura los roles. En el UserSeeder se define el rol por usuario. En las rutas se configura el tipo de permiso.
 
 ---
 
